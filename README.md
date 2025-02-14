@@ -110,7 +110,7 @@ sh scripts/test.sh SynHand smplest_x_h 5
 ## FAQ
 - How do I animate my virtual characters with SMPLest-X output (like that in the demo video)? 
   - We are working on that, please stay tuned!
-    Currently, this repo supports SMPL-X estimation and a simple visualization (overlay of SMPL-X vertices). -->
+    Currently, this repo supports SMPL-X estimation and a simple visualization (overlay of SMPL-X vertices).
 
 
 ## Citation
