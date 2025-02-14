@@ -25,7 +25,7 @@ This work is the extended version of [SMPLer-X](https://arxiv.org/abs/2309.17448
 
 ## Install
 ```bash
-bash script/install.sh
+bash scripts/install.sh
 ```
 
 ## Preparation
