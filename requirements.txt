@@ -1,0 +1,13 @@
+numpy==1.23.1
+smplx==0.1.28
+pyopengl==3.1.4
+tqdm
+opencv-python
+chumpy
+trimesh
+pyrender
+matplotlib
+json_tricks
+einops
+timm
+ultralytics
