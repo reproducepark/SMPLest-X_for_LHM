@@ -1,6 +1,5 @@
 numpy==1.23.1
 smplx==0.1.28
-pyopengl==3.1.0
 tqdm==4.67.1
 opencv-python==4.11.0.86
 chumpy==0.70
@@ -11,3 +10,4 @@ json_tricks==3.17.3
 einops==0.8.1
 timm==1.0.14
 ultralytics==8.3.75
+pyopengl
