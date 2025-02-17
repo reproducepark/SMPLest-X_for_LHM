@@ -8,3 +8,7 @@ pip install -r requirements.txt
 apt-get update
 apt-get install python-opengl -y
 apt-get install libosmesa6 -y 
+
+# update version for pyopengl
+# Note: please ignore the incompatible error message if 3.1.4 can be installed
+pip install pyopengl==3.1.4
