@@ -32,8 +32,8 @@ bash scripts/install.sh
 ## Preparation
 
 #### SMPLest-X pretrained models
-- Download the pretrained **SMPLest-X-Huge model** weight from [here](https://drive.google.com/file/d/1PFQzdlitQstqWT75Mf8_o5bJhwBDVdM1) (7.62G).
-- Pretrained weight and respective config file is included in the compressed file.
+- Download the pretrained **SMPLest-X-Huge model** weight from [here](https://huggingface.co/waanqii/SMPLest-X/tree/main) (8.2G).
+- Place the pretrained weight and respective config file according to the file structure.
 
 #### Parametric human models
 - Download [SMPL-X](https://smpl-x.is.tue.mpg.de/) and [SMPL](https://smpl.is.tue.mpg.de/) body models.
