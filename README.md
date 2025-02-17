@@ -18,6 +18,7 @@ This work is the extended version of [SMPLer-X](https://arxiv.org/abs/2309.17448
 
 ## News
 
+- [2025-02-17] Pretrained model available for download.
 - [2025-02-14] 💌💌💌 Brand new codebase released for trainig, testing and inference.
 - [2025-01-20] Paper released on [arXiv](https://arxiv.org/abs/2501.09782).
 - [2025-01-08] Project page created.
@@ -30,8 +31,9 @@ bash scripts/install.sh
 
 ## Preparation
 
-#### SMPLest-X retrained Models
-- To be released soon...
+#### SMPLest-X pretrained models
+- Download the pretrained **SMPLest-X-Huge model** weight from [here](https://drive.google.com/file/d/1PFQzdlitQstqWT75Mf8_o5bJhwBDVdM1) (7.62G).
+- Pretrained weight and respective config file is included in the compressed file.
 
 #### Parametric human models
 - Download [SMPL-X](https://smpl-x.is.tue.mpg.de/) and [SMPL](https://smpl.is.tue.mpg.de/) body models.
@@ -60,7 +62,7 @@ The file structure should be like:
 ├── pretrained_models
 │   ├── vitpose_huge.pth # for training only
 │   ├── yolov8x.pt # auto download during inference
-│   └── smplest_x_h40 # comming soon
+│   └── smplest_x_h40
 │       ├── smplest_x_h40.pth.tar
 │       └── config_base.py
 ├── scripts
