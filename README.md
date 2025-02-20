@@ -12,7 +12,9 @@ This work is the extended version of [SMPLer-X](https://arxiv.org/abs/2309.17448
     <a href="https://caizhongang.github.io/projects/SMPLer-X/" class="button"><b>[Homepage]</b></a> &nbsp;&nbsp;&nbsp;&nbsp;
     <a href="https://youtu.be/DepTqbPpVzY" class="button"><b>[Video]</b></a> &nbsp;&nbsp;&nbsp;&nbsp;
     <a href="https://github.com/caizhongang/SMPLer-X" class="button"><b>[SMPLer-X]</b></a> &nbsp;&nbsp;&nbsp;&nbsp;
-    <a href="https://github.com/open-mmlab/mmhuman3d" class="button"><b>[MMHuman3D]</b></a>
+    <a href="https://github.com/open-mmlab/mmhuman3d" class="button"><b>[MMHuman3D]</b></a> &nbsp;&nbsp;&nbsp;&nbsp;
+    <a href="https://github.com/wqyin/WHAC/tree/main" class="button"><b>[WHAC]</b></a></a>
+    
 </div>
 
 
