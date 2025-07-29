@@ -152,7 +152,6 @@ def main():
             smplx_jaw_pose = out['smplx_jaw_pose'].detach().cpu().numpy()[0]
             smplx_shape = out['smplx_shape'].detach().cpu().numpy()[0]
             smplx_expr = out['smplx_expr'].detach().cpu().numpy()[0]
-            cam_trans = out['cam_trans'].detach().cpu().numpy()[0]
             
             # Convert body pose from 63 to 21 parameters (3 per joint) as nested arrays
             body_pose_21 = smplx_body_pose[:63].reshape(-1, 3)[:21].tolist()
@@ -166,6 +165,9 @@ def main():
             leye_pose = np.zeros(3)
             reye_pose = np.zeros(3)
             
+            # 원본 이미지 크기에 맞는 princpt 계산
+            princpt = [original_img_width / 2, original_img_height / 2]
+            
             frame_results = {
                 'betas': smplx_shape.tolist(),
                 'root_pose': smplx_root_pose.tolist(),
@@ -175,14 +177,17 @@ def main():
                 'reye_pose': reye_pose.tolist(),
                 'lhand_pose': lhand_pose_15,
                 'rhand_pose': rhand_pose_15,
-                'trans': cam_trans.tolist(),
+                'trans': out['cam_trans'].detach().cpu().numpy()[0].tolist(),
                 'focal': cfg.model.focal,
-                'princpt': cfg.model.princpt,
+                'princpt': princpt,
                 'img_size_wh': [original_img_width, original_img_height],
                 'pad_ratio': 0.2
             }
         else:
             # No person detected, create empty result
+            # 원본 이미지 크기에 맞는 princpt 계산
+            princpt = [original_img_width / 2, original_img_height / 2]
+            
             frame_results = {
                 'betas': [0.0] * 10,
                 'root_pose': [0.0] * 3,
@@ -194,7 +199,7 @@ def main():
                 'rhand_pose': [[0.0, 0.0, 0.0] for _ in range(15)],  # 15 joints * 3
                 'trans': [0.0] * 3,
                 'focal': cfg.model.focal,
-                'princpt': cfg.model.princpt,
+                'princpt': princpt,
                 'img_size_wh': [original_img_width, original_img_height],
                 'pad_ratio': 0.2
             }
