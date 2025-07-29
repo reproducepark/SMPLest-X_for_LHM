@@ -1,5 +1,6 @@
 import os
 import os.path as osp
+import sys
 import argparse
 import numpy as np
 import torchvision.transforms as transforms
@@ -7,14 +8,19 @@ import torch.backends.cudnn as cudnn
 import torch
 import cv2
 import datetime
+import json
 from tqdm import tqdm
 from pathlib import Path
+
+# 프로젝트 루트 디렉토리를 Python 경로에 추가
+root_dir = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(root_dir))
+
 from human_models.human_models import SMPLX
 from ultralytics import YOLO
 from main.base import Tester
 from main.config import Config
 from utils.data_utils import load_img, process_bbox, generate_patch_image
-from utils.visualization_utils import render_mesh
 from utils.inference_utils import non_max_suppression
 
 
@@ -26,6 +32,7 @@ def parse_args():
     parser.add_argument('--start', type=str, default=1)
     parser.add_argument('--end', type=str, default=1)
     parser.add_argument('--multi_person', action='store_true')
+    parser.add_argument('--save_json', action='store_true', help='Save SMPL-X results as JSON')
     args = parser.parse_args()
     return args
 
@@ -35,13 +42,15 @@ def main():
 
     # init config
     time_str = datetime.datetime.now().strftime('%Y%m%d_%H%M%S')
-    root_dir = Path(__file__).resolve().parent.parent
     config_path = osp.join('./pretrained_models', args.ckpt_name, 'config_base.py')
     cfg = Config.load_config(config_path)
     checkpoint_path = osp.join('./pretrained_models', args.ckpt_name, f'{args.ckpt_name}.pth.tar')
     img_folder = osp.join(root_dir, 'demo', 'input_frames', args.file_name)
     output_folder = osp.join(root_dir, 'demo', 'output_frames', args.file_name)
+    json_folder = osp.join(root_dir, 'demo', 'output_json', args.file_name)
     os.makedirs(output_folder, exist_ok=True)
+    if args.save_json:
+        os.makedirs(json_folder, exist_ok=True)
     exp_name = f'inference_{args.file_name}_{args.ckpt_name}_{time_str}'
 
     new_config = {
@@ -76,11 +85,10 @@ def main():
     for frame in tqdm(range(start, end)):
         
         # prepare input image
-        img_path =osp.join(img_folder, f'{int(frame):06d}.jpg')
+        img_path = osp.join(img_folder, f'{int(frame):06d}.jpg')
 
         transform = transforms.ToTensor()
         original_img = load_img(img_path)
-        vis_img = original_img.copy()
         original_img_height, original_img_width = original_img.shape[:2]
         
         # detection, xyxy
@@ -95,7 +103,7 @@ def main():
         if len(yolo_bbox)<1:
             # save original image if no bbox
             num_bbox = 0
-        if not args.multi_person:
+        elif not args.multi_person:
             # only select the largest bbox
             num_bbox = 1
             # yolo_bbox = yolo_bbox[0]
@@ -103,6 +111,17 @@ def main():
             # keep bbox by NMS with iou_thr
             yolo_bbox = non_max_suppression(yolo_bbox, cfg.inference.detection.iou_thr)
             num_bbox = len(yolo_bbox)
+
+        frame_results = {
+            'frame_id': frame,
+            'image_path': img_path,
+            'image_size': [original_img_width, original_img_height],
+            'camera_params': {
+                'focal': cfg.model.focal,
+                'princpt': cfg.model.princpt
+            },
+            'persons': []
+        }
 
         # loop all detected bboxes
         for bbox_id in range(num_bbox):
@@ -135,23 +154,36 @@ def main():
             with torch.no_grad():
                 out = demoer.model(inputs, targets, meta_info, 'test')
 
-            mesh = out['smplx_mesh_cam'].detach().cpu().numpy()[0]
-
-            # render mesh
-            focal = [cfg.model.focal[0] / cfg.model.input_body_shape[1] * bbox[2], 
-                     cfg.model.focal[1] / cfg.model.input_body_shape[0] * bbox[3]]
-            princpt = [cfg.model.princpt[0] / cfg.model.input_body_shape[1] * bbox[2] + bbox[0], 
-                       cfg.model.princpt[1] / cfg.model.input_body_shape[0] * bbox[3] + bbox[1]]
+            # Extract SMPL-X parameters
+            person_result = {
+                'person_id': bbox_id,
+                'bbox': yolo_bbox[bbox_id].tolist(),
+                'smplx_params': {
+                    'root_pose': out['smplx_root_pose'].detach().cpu().numpy()[0].tolist(),
+                    'body_pose': out['smplx_body_pose'].detach().cpu().numpy()[0].tolist(),
+                    'left_hand_pose': out['smplx_lhand_pose'].detach().cpu().numpy()[0].tolist(),
+                    'right_hand_pose': out['smplx_rhand_pose'].detach().cpu().numpy()[0].tolist(),
+                    'jaw_pose': out['smplx_jaw_pose'].detach().cpu().numpy()[0].tolist(),
+                    'shape': out['smplx_shape'].detach().cpu().numpy()[0].tolist(),
+                    'expression': out['smplx_expr'].detach().cpu().numpy()[0].tolist(),
+                    'cam_trans': out['cam_trans'].detach().cpu().numpy()[0].tolist()
+                },
+                'joints_3d': out['smplx_joint_cam'].detach().cpu().numpy()[0].tolist(),
+                'joints_2d': out['smplx_joint_proj'].detach().cpu().numpy()[0].tolist(),
+                'mesh_vertices': out['smplx_mesh_cam'].detach().cpu().numpy()[0].tolist(),
+                'camera_params': {
+                    'focal': cfg.model.focal,
+                    'princpt': cfg.model.princpt
+                }
+            }
             
-            # draw the bbox on img
-            vis_img = cv2.rectangle(vis_img, (int(yolo_bbox[bbox_id][0]), int(yolo_bbox[bbox_id][1])), 
-                                    (int(yolo_bbox[bbox_id][2]), int(yolo_bbox[bbox_id][3])), (0, 255, 0), 1)
-            # draw mesh
-            vis_img = render_mesh(vis_img, mesh, smpl_x.face, {'focal': focal, 'princpt': princpt}, mesh_as_vertices=False)
+            frame_results['persons'].append(person_result)
 
-        # save rendered image
-        frame_name = os.path.basename(img_path)
-        cv2.imwrite(os.path.join(output_folder, frame_name), vis_img[:, :, ::-1])
+        # Save JSON results
+        if args.save_json:
+            json_path = osp.join(json_folder, f'{int(frame):06d}.json')
+            with open(json_path, 'w') as f:
+                json.dump(frame_results, f, indent=2)
 
 
 if __name__ == "__main__":
