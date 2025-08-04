@@ -1,12 +1,12 @@
 # SMPLest-X
 
-This repository is a fork of the original SMPLest-X project with additional functionality to convert model outputs to LHM (Lightweight Human Model) compatible SMPL format.
+This repository is a fork of the original SMPLest-X project with additional functionality to convert model outputs to LHM (Large Animatable Human Reconstruction Model) compatible SMPL format.
 
 **Original Repository: https://github.com/SMPLCap/SMPLest-X**
 
 ## Overview
 
-SMPLest-X is an SMPL-X based 3D human pose and mesh estimation model. This fork extends the original model with the capability to convert its outputs to a format compatible with LHM (Lightweight Human Model) by adjusting the SMPL format.
+SMPLest-X is an SMPL-X based 3D human pose and mesh estimation model. This fork extends the original model with the capability to convert its outputs to a format compatible with LHM (Large Animatable Human Reconstruction Model) by adjusting the SMPL format.
 
 This project provides the following features:
 
@@ -19,7 +19,7 @@ This project provides the following features:
 
 ### SMPL-X to LHM Compatible Format Conversion
 
-The model performs the following format adjustments to make outputs compatible with LHM (Lightweight Human Model):
+The model performs the following format adjustments to make outputs compatible with LHM (Large Animatable Human Reconstruction Model):
 
 - **Body Pose**: Convert from 63 parameters to 21 joints (3 parameters each)
 - **Hand Poses**: Convert from 45 parameters to 15 joints (3 parameters each)
