@@ -6,7 +6,7 @@ pip install -r requirements.txt
 
 # for osmesa
 apt-get update
-apt-get install python-opengl -y
+apt-get install python3-opengl -y
 apt-get install libosmesa6 -y 
 
 # update version for pyopengl
