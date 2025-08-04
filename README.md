@@ -1,4 +1,4 @@
-# SMPLest-X
+# SMPLest-X_for_LHM
 
 This repository is a fork of the original SMPLest-X project with additional functionality to convert model outputs to LHM (Large Animatable Human Reconstruction Model) compatible SMPL format.
 
